@@ -3,13 +3,74 @@ marp: true
 title: Geospatial pipelines with Kedro
 paginate: true
 style: |
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap");
+
+  /* Vizzuality palette (from vizzuality.com) */
+  section {
+    --black: #222222;
+    --green: #2ba4a0;
+    --cream: #f8f5f3;
+    --yellow: #fae356;
+    --grey: #86868b;
+
+    font-family: Inter, sans-serif;
+    font-size: 28px;
+    background: var(--cream);
+    color: var(--black);
+    padding: 64px 80px;
+  }
+  h1, h2 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--black);
+  }
+  h2 {
+    font-size: 1.6em;
+    border-bottom: 6px solid var(--green);
+    padding-bottom: 0.2em;
+    width: fit-content;
+  }
+  strong { color: var(--green); }
+  em { color: var(--grey); }
+  ul li::marker, ol li::marker { color: var(--green); font-weight: 800; }
+  code {
+    background: #fff;
+    color: var(--black);
+    border-radius: 4px;
+  }
+  pre {
+    background: #fff;
+    border-left: 6px solid var(--green);
+    border-radius: 4px;
+    font-size: 0.8em;
+  }
+  section::after { color: var(--grey); font-size: 0.6em; }
+
   section.lead {
     text-align: center;
     justify-content: center;
   }
+  section.lead h2 { margin-inline: auto; }
+
+  section.dark {
+    background: var(--black);
+    color: var(--cream);
+  }
+  section.dark h1, section.dark h2 { color: var(--cream); }
+  section.dark h1 { font-size: 2.4em; }
+  section.dark h1::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 8px;
+    margin: 0.4em auto 0;
+    background: var(--yellow);
+  }
+  section.dark em { color: var(--green); }
+  section.dark code { background: #333; color: var(--yellow); }
 ---
 
-<!-- _class: lead -->
+<!-- _class: lead dark -->
 <!-- _paginate: false -->
 
 # Geospatial pipelines with Kedro
@@ -97,7 +158,7 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ---
 
-<!-- _class: lead -->
+<!-- _class: lead dark -->
 
 ## Demo: the resulting DAG
 

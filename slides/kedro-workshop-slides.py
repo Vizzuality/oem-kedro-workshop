@@ -16,7 +16,7 @@ def _():
 
     *Reproducible, testable geodata workflows*
 
-    OEM Kedro Workshop
+    Biel Stela Ballester
     """).center()
     return (mo,)
 

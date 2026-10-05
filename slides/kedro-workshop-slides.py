@@ -14,7 +14,7 @@ def _():
     mo.md("""
     # Geospatial pipelines with Kedro
 
-    *Reproducible, testable geodata workflows*
+    *Reproducible and testable geospatial data workflows*
 
     Biel Stela Ballester
     """).center()
@@ -158,6 +158,27 @@ def _(mo, resolution):
     This is the kind of thing worth putting in `parameters.yml` instead of
     hard-coding it.
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("""
+    ## Your turn: run some Python
+
+    The cell below runs **in your browser**. Edit it and press Run (or Ctrl+Enter).
+    """)
+    return
+
+
+@app.cell
+def _():
+    import sys
+
+    print(f"Hello from Python {sys.version.split()[0]}")
+    print("Platform:", sys.platform)  # 'emscripten' means it runs in your browser
+
+    sum(i**2 for i in range(10))
     return
 
 

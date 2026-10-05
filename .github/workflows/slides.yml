@@ -31,7 +31,7 @@ jobs:
       - name: Export slides
         working-directory: slides
         run: |
-          uv run marimo export html-wasm kedro-workshop-slides.py -o _site --mode run --force
+          uv run marimo export html-wasm kedro-workshop-slides.py -o _site --mode edit --force
           rm -f _site/CLAUDE.md
           touch _site/.nojekyll
 

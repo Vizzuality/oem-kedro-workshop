@@ -3,292 +3,187 @@ marp: true
 title: Geospatial pipelines with Kedro
 paginate: true
 style: |
-  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+  /*
+    Layouts
+    -------
+    (none)     Default content slide: `##` title + text, lists, code, images.
+    cover      Title slide over satellite imagery. `#` title, then subtitle, then author.
+    divider    Black section break. `##` statement with a yellow bar + optional line.
+    split      Two columns. The LAST block (code, list, image…) goes on the right,
+               everything before it stacks on the left.
 
-  /* ---------- Tokens ---------- */
+    Extras that work on default and split slides:
+    - `# 100×`  a `#` heading renders as a big teal number/stat.
+    - `1. **Title** text`  ordered lists render as big numbered items.
+
+    Usage:  <!-- _class: split -->
+  */
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
+
   section {
     --primary: #2ba4a0;
     --cyan: #04ccc5;
     --yellow: #ffe334;
     --black: #000000;
-    --white: #ffffff;
     --ink: #2b2b2b;
-  }
+    --muted: #6b6b6b;
+    --code-bg: #f6f8fa;
+    --border: #e1e4e8;
 
-  /* ---------- Base: Inter only. Big = Bold, small = Regular ---------- */
-  section,
-  section code,
-  section pre,
-  section pre code {
     font-family: Inter, sans-serif;
-    font-weight: 400;
-  }
-  section {
-    background: var(--white);
-    color: var(--ink);
-    font-size: 24px;
+    font-size: 26px;
     line-height: 1.45;
+    color: var(--ink);
+    background: #fff;
     padding: 72px 88px;
   }
+  section::after { font-size: 14px; color: var(--primary); right: 40px; bottom: 28px; }
+
+  /* ---------- Typography ---------- */
   section h1,
-  section h2 {
+  section h2,
+  section h3 {
     font-weight: 700;
-    letter-spacing: -0.035em;
-    line-height: 0.98;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
     color: inherit;
     border: none;
     padding: 0;
     margin: 0;
   }
-  section h2 { font-size: 64px; }
-  section p { margin: 0; }
+  section h2 { font-size: 56px; margin-bottom: 32px; }
+  section h3 { font-size: 32px; }
+  section h1 { font-size: 120px; letter-spacing: -0.05em; line-height: 1; color: var(--primary); margin-bottom: 16px; }
+  section p,
+  section ul,
+  section ol,
+  section pre { margin: 0 0 24px; }
   section strong { font-weight: 700; color: inherit; }
-  section em { font-style: normal; }
-  section code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    font-size: 1em;
-  }
-  section::after {
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    color: var(--primary);
-    right: 40px;
-    bottom: 28px;
-  }
+  section a { color: var(--primary); }
+  section li + li { margin-top: 8px; }
 
-  /* ---------- 1. Hero ---------- */
-  section.hero {
+  /* Big numbered lists */
+  section ol { list-style: none; padding: 0; counter-reset: item; }
+  section ol li {
+    counter-increment: item;
+    position: relative;
+    margin: 0;
+    padding: 14px 0 14px 80px;
+    border-top: 1px solid var(--border);
+  }
+  section ol li::before {
+    content: counter(item, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 6px;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--primary);
+  }
+  section ol li strong { margin-right: 0.4em; }
+
+  /* ---------- Code ---------- */
+  section code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--code-bg);
+    color: var(--ink);
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+  }
+  section pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  section pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* GitHub light syntax colours */
+  section pre .hljs-comment,
+  section pre .hljs-quote { color: #6a737d; }
+  section pre .hljs-keyword,
+  section pre .hljs-selector-tag,
+  section pre .hljs-type { color: #d73a49; }
+  section pre .hljs-string,
+  section pre .hljs-regexp { color: #032f62; }
+  section pre .hljs-number,
+  section pre .hljs-literal,
+  section pre .hljs-attr,
+  section pre .hljs-variable,
+  section pre .hljs-built_in { color: #005cc5; }
+  section pre .hljs-title,
+  section pre .hljs-section { color: #6f42c1; }
+  section pre .hljs-name,
+  section pre .hljs-tag { color: #22863a; }
+  section pre .hljs-meta,
+  section pre .hljs-params,
+  section pre .hljs-punctuation { color: var(--ink); }
+
+  /* ---------- cover ---------- */
+  section.cover {
     background:
       linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0) 80%),
       url("https://cdn.prod.website-files.com/6050a76fa6a633d5d54ae714/60db42e458a2686322b441ef_imagery-4.jpeg") center / cover;
-    color: var(--white);
+    color: #fff;
     justify-content: flex-end;
-    align-items: flex-start;
     padding: 88px;
   }
-  section.hero h1 {
-    font-size: 112px;
-    max-width: 900px;
-    letter-spacing: -0.045em;
-  }
-  section.hero h1 + p {
-    margin-top: 36px;
-    font-size: 26px;
-    max-width: 640px;
-  }
-  section.hero p:last-child {
-    margin-top: 56px;
+  section.cover h1 { font-size: 104px; max-width: 900px; color: inherit; margin-bottom: 32px; }
+  section.cover p { font-size: 26px; max-width: 640px; }
+  section.cover p:last-child {
+    margin: 32px 0 0;
     font-size: 16px;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
     color: var(--cyan);
   }
 
-  /* ---------- 2. Split: black problem / white numbered answer ---------- */
+  /* ---------- divider ---------- */
+  section.divider {
+    background: var(--black);
+    color: #fff;
+    justify-content: center;
+  }
+  section.divider h2 { font-size: 80px; max-width: 960px; margin-bottom: 24px; }
+  section.divider h2::before {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 6px;
+    margin-bottom: 32px;
+    background: var(--yellow);
+  }
+  section.divider p { color: rgba(255, 255, 255, 0.65); }
+  section.divider code { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+  /* ---------- split ---------- */
   section.split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, auto);
-    align-content: center;
-    column-gap: 176px;
-    background: linear-gradient(90deg, var(--black) 50%, var(--white) 50%);
-  }
-  section.split > :not(ol) { grid-column: 1; color: var(--white); }
-  section.split h2 { font-size: 72px; }
-  section.split h2 + p { margin-top: 40px; font-size: 22px; }
-  section.split ul {
-    margin: 24px 0 0;
-    padding: 0;
-    list-style: none;
-    font-size: 20px;
-  }
-  section.split ul li {
-    padding: 12px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-  }
-  section.split ol {
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    align-self: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    counter-reset: item;
-  }
-  section.split ol li {
-    counter-increment: item;
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    align-items: center;
-    padding: 20px 0;
-  }
-  section.split ol li::before {
-    content: counter(item, decimal-leading-zero);
-    grid-row: 1 / span 2;
-    font-size: 96px;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    color: var(--primary);
-  }
-  section.split ol li strong { display: block; font-size: 32px; letter-spacing: -0.02em; }
-  section.split ol li { font-size: 20px; }
-
-  /* ---------- 3, 4, 5, 7. Code: statement left, terminal right ---------- */
-  section.code {
-    display: grid;
     grid-template-columns: 5fr 7fr;
-    grid-template-rows: 1fr auto auto auto 1fr;
-    column-gap: 72px;
+    grid-auto-rows: min-content;
+    align-content: center;
+    column-gap: 64px;
   }
-  section.code > :not(pre) { grid-column: 1; }
-  section.code > h2 { grid-row: 2; }
-  section.code > h1 { grid-row: 3; margin-top: 32px; }
-  section.code > p { grid-row: 3; margin-top: 32px; }
-  section.code > h1 ~ p { grid-row: 4; }
-  section.code h2 { font-size: 60px; }
-  section.code h1 {
-    font-size: 140px;
-    letter-spacing: -0.06em;
-    line-height: 0.85;
-    color: var(--primary);
-  }
-  section.code p { font-size: 22px; max-width: 420px; }
-  section.code p code { color: var(--primary); }
-  section.code pre {
+  section.split > * { grid-column: 1; }
+  section.split > :last-child {
     grid-column: 2;
-    grid-row: 1 / -1;
+    grid-row: 1 / span 20;
     align-self: center;
     margin: 0;
-    padding: 64px 36px 36px;
-    font-feature-settings: "calt" 0, "liga" 0;
-    background: var(--black);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    font-size: 17px;
-    line-height: 1.6;
-    position: relative;
   }
-  section.code pre::before {
-    content: "";
-    position: absolute;
-    top: 24px;
-    left: 36px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--yellow);
-    box-shadow: 18px 0 0 var(--primary), 36px 0 0 var(--cyan);
-  }
-  section.code pre code { color: var(--white); }
-
-  /* Syntax colours on the dark terminal */
-  section pre .hljs-keyword,
-  section pre .hljs-built_in,
-  section pre .hljs-title { color: var(--cyan); }
-  section pre .hljs-attr,
-  section pre .hljs-params,
-  section pre .hljs-type { color: var(--primary); }
-  section pre .hljs-string,
-  section pre .hljs-number,
-  section pre .hljs-literal { color: var(--yellow); }
-  section pre .hljs-comment { color: rgba(255, 255, 255, 0.45); }
-  section pre .hljs-meta,
-  section pre .hljs-bullet,
-  section pre .hljs-punctuation { color: var(--white); }
-
-  /* ---------- 6. Interlude ---------- */
-  section.interlude {
-    background: var(--yellow);
-    color: var(--black);
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-  section.interlude h2 {
-    font-size: 148px;
-    letter-spacing: -0.055em;
-    max-width: 1000px;
-  }
-  section.interlude p { margin-top: 48px; font-size: 26px; }
-
-  /* ---------- 8. Bento ---------- */
-  section.bento {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 1fr 1fr;
-    gap: 16px;
-    padding: 56px;
-    background: var(--black);
-    color: var(--white);
-    counter-reset: item;
-  }
-  section.bento h2 {
-    grid-column: span 2;
-    align-self: end;
-    padding: 24px;
-    font-size: 104px;
-    letter-spacing: -0.05em;
-  }
-  section.bento ol { display: contents; }
-  section.bento ol li {
-    counter-increment: item;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    margin: 0;
-    padding: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    font-size: 18px;
-    line-height: 1.35;
-    color: rgba(255, 255, 255, 0.7);
-  }
-  section.bento ol li::before {
-    content: counter(item, decimal-leading-zero);
-    margin-bottom: auto;
-    font-size: 16px;
-    color: var(--cyan);
-  }
-  section.bento ol li:first-child {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: var(--white);
-  }
-  section.bento ol li:first-child::before { color: var(--white); }
-  section.bento ol li strong {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 34px;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: var(--white);
-  }
-  section.bento ol li strong code { font-weight: 700; color: inherit; }
-  section.bento > p {
-    grid-column: span 2;
-    display: flex;
-    align-items: flex-end;
-    padding: 28px;
-    border-radius: 10px;
-    background: var(--yellow);
-    color: var(--black);
-  }
-  section.bento > p strong { font-size: 64px; letter-spacing: -0.045em; line-height: 1; }
 ---
 
-<!-- _class: hero -->
+<!-- _class: cover -->
 <!-- _paginate: false -->
 
 # Geospatial pipelines with Kedro
 
 Reproducible and scalable geospatial data workflows
 
-Biel Stela Ballester
+Biel Stela Ballester — biel.stela@vizzuality.com
 
 ---
 
@@ -308,7 +203,7 @@ Geospatial projects tend to turn into a pile of notebooks and scripts:
 
 ---
 
-<!-- _class: code -->
+<!-- _class: split -->
 
 ## The Data Catalog
 
@@ -333,9 +228,11 @@ zonal_stats:
 
 ---
 
-<!-- _class: code -->
+<!-- _class: split -->
 
 ## Nodes are plain functions
+
+No I/O inside the function, so it's easy to test with a tiny GeoDataFrame.
 
 ```python
 import geopandas as gpd
@@ -351,11 +248,9 @@ def compute_area(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     return gdf
 ```
 
-No I/O inside the function, so it's easy to test with a tiny GeoDataFrame.
-
 ---
 
-<!-- _class: code -->
+<!-- _class: split -->
 
 ## Wiring the pipeline
 
@@ -377,7 +272,7 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ---
 
-<!-- _class: interlude -->
+<!-- _class: divider -->
 <!-- _paginate: false -->
 
 ## Demo: the resulting DAG
@@ -386,7 +281,7 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ---
 
-<!-- _class: code -->
+<!-- _class: split -->
 
 ## Parameters, not magic numbers
 
@@ -402,8 +297,6 @@ resolution_m: 100
 
 ---
 
-<!-- _class: bento -->
-
 ## Takeaways
 
 1. **Catalog, not code** Every dataset declared once
@@ -411,4 +304,11 @@ resolution_m: 100
 3. **Parameters** CRS, resolution, thresholds
 4. **`kedro viz`** Show the pipeline, don't explain it
 
-**Questions?**
+---
+
+<!-- _class: divider -->
+<!-- _paginate: false -->
+
+## Thank you
+
+biel.stela@vizzuality.com

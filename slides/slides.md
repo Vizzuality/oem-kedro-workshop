@@ -17,6 +17,7 @@ style: |
     - `1. **Title** text`  ordered lists render as big numbered items.
 
     Usage:  <!-- _class: split -->
+    Combine:  <!-- _class: split divider -->  (black two-column slide)
   */
   @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
 
@@ -101,6 +102,7 @@ style: |
     line-height: 1.5;
   }
   section pre code { background: none; padding: 0; font-size: 1em; }
+  section :is(h1, h2, h3) code { background: none !important; padding: 0; font-size: 1em; color: inherit !important; }
 
   /* GitHub light syntax colours */
   section pre .hljs-comment,
@@ -157,7 +159,30 @@ style: |
     background: var(--yellow);
   }
   section.divider p { color: rgba(255, 255, 255, 0.65); }
-  section.divider code { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  section.divider :not(pre) > code { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+  /* GitHub dark code on divider slides */
+  section.divider pre { background: #161b22; border-color: #30363d; }
+  section.divider pre code { color: #e6edf3; }
+  section.divider pre .hljs-comment,
+  section.divider pre .hljs-quote { color: #8b949e; }
+  section.divider pre .hljs-keyword,
+  section.divider pre .hljs-selector-tag,
+  section.divider pre .hljs-type { color: #ff7b72; }
+  section.divider pre .hljs-string,
+  section.divider pre .hljs-regexp { color: #a5d6ff; }
+  section.divider pre .hljs-number,
+  section.divider pre .hljs-literal,
+  section.divider pre .hljs-attr,
+  section.divider pre .hljs-variable,
+  section.divider pre .hljs-built_in { color: #79c0ff; }
+  section.divider pre .hljs-title,
+  section.divider pre .hljs-section { color: #d2a8ff; }
+  section.divider pre .hljs-name,
+  section.divider pre .hljs-tag { color: #7ee787; }
+  section.divider pre .hljs-meta,
+  section.divider pre .hljs-params,
+  section.divider pre .hljs-punctuation { color: #e6edf3; }
 
   /* ---------- split ---------- */
   section.split {
@@ -181,25 +206,76 @@ style: |
 
 # Geospatial pipelines with Kedro
 
-Reproducible and scalable geospatial data workflows
+Reproducible and scalable geospatial data workflows.
 
 Biel Stela Ballester — biel.stela@vizzuality.com
 
 ---
 
+<!--_class: divider -->
+
+Get the slides at
+
+`https://vizzuality.github.io/oem-kedro-workshop`
+
+
+---
+
+## The context
+
+---
+
+## Geospatial data pipelines 
+
+- Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
+- People come from different backgrounds.
+- Teams have different levels of software engineering skills.
+
+---
+
 <!-- _class: split -->
 
-## Why Kedro for geospatial?
+## Why Kedro?
 
-Geospatial projects tend to turn into a pile of notebooks and scripts:
-
-- Hard-coded paths to shapefiles and rasters
-- CRS conversions scattered everywhere
-- "Run cell 4, then cell 2, then cell 7"
+Opinionated framework that streamlines and organizes projects around software engineering "best practices".
 
 1. **Data Catalog** Every dataset declared in one place
-2. **Pipelines** Pure Python functions wired into a DAG
+2. **Pipelines and Nodes** Pure Python functions wired into a DAG
 3. **Reproducibility** Same inputs give the same outputs
+
+---
+<!-- _class: split divider -->
+
+## `kedro`
+
+start with `kedro new -n example`
+
+```
+.
+├── conf
+│  ├── base
+│  │  ├── catalog.yml
+│  │  └── parameters.yml
+│  ├── local
+│  │  └── credentials.yml
+│  └── logging.yml
+├── data
+│  ├── 01_raw
+│  ├── 02_intermediate
+│  └── 03_primary
+├── src
+│  └── simple_example
+│     ├── pipeline_registry.py
+│     ├── pipelines
+│     └── settings.py
+├── tests
+│  ├── __init__.py
+│  └── pipelines
+├── pyproject.toml
+├── README.md
+├── requirements.txt
+└── uv.lock
+```
 
 ---
 
@@ -207,7 +283,7 @@ Geospatial projects tend to turn into a pile of notebooks and scripts:
 
 ## The Data Catalog
 
-Vector and raster data are declared like any other dataset.
+Record of all the I/O datasets.
 
 ```yaml
 # conf/base/catalog.yml
@@ -232,9 +308,10 @@ zonal_stats:
 
 ## Nodes are plain functions
 
-No I/O inside the function, so it's easy to test with a tiny GeoDataFrame.
+**No I/O** inside the function, so it's easy to test with tiny sample data.
 
 ```python
+# src/example/pipelines/{pipeline}/nodes.py
 import geopandas as gpd
 
 
@@ -257,6 +334,7 @@ def compute_area(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 Nodes connect through dataset names. Kedro works out the run order.
 
 ```python
+# src/example/pipelines/{pipeline}/pipeline.py
 from kedro.pipeline import Pipeline, node
 
 
@@ -272,6 +350,20 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ---
 
+<!-- _class: split -->
+
+## Parameters
+
+Parameters go to the `parameters.yml` files, which is namespaced by `env` and easy to change.
+
+```yaml
+# conf/{env}/parameters.yml
+target_crs: "EPSG:3035"
+resolution_m: 100
+```
+
+---
+
 <!-- _class: divider -->
 <!-- _paginate: false -->
 
@@ -281,19 +373,10 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ---
 
-<!-- _class: split -->
+## What doesn't work so well
 
-## Parameters, not magic numbers
+TODO
 
-# 100×
-
-more pixels at 10 m than at 100 m: 1 M to 100 M for a 10,000 km² region. Change it in `parameters.yml`, not in code.
-
-```yaml
-# conf/base/parameters.yml
-target_crs: "EPSG:3035"
-resolution_m: 100
-```
 
 ---
 

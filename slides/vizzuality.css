@@ -1,0 +1,157 @@
+/* @theme vizzuality */
+
+/*
+  Layouts
+  -------
+  (none)     Default content slide: `##` title + text, lists, code, images.
+  cover      Title slide. `#` title, then subtitle, then author. Set the image
+             per slide with the `_backgroundImage` directive.
+  divider    Black section break. `##` statement with a yellow bar + optional line.
+  split      Two columns. The LAST block (code, list, image…) goes on the right,
+             everything before it stacks on the left.
+
+  Extras that work on default and split slides:
+  - `# 100×`  a `#` heading renders as a big teal number/stat.
+  - `1. **Title** text`  ordered lists render as big numbered items.
+
+  Usage:  <!-- _class: split -->
+  Combine:  <!-- _class: split divider -->  (black two-column slide)
+
+  Code highlighting comes from the default theme (GitHub palette). Dark slides
+  get the GitHub dark palette through `color-scheme: dark`, same as the
+  built-in `invert` class.
+*/
+
+@import "default";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
+
+section {
+  --primary: #2ba4a0;
+  --cyan: #04ccc5;
+  --yellow: #ffe334;
+  --black: #000000;
+  --ink: light-dark(#2b2b2b, #e6edf3);
+  --muted: #6b6b6b;
+  --code-bg: light-dark(#f6f8fa, #161b22);
+  --border: light-dark(#e1e4e8, #30363d);
+
+  font-family: Inter, sans-serif;
+  font-size: 26px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: #fff;
+  padding: 72px 88px;
+}
+section::after { font-size: 14px; color: var(--primary); right: 40px; bottom: 28px; }
+
+/* ---------- Typography ---------- */
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+}
+h2 { font-size: 56px; margin-bottom: 32px; }
+h3 { font-size: 32px; }
+h1 { font-size: 120px; letter-spacing: -0.05em; line-height: 1; color: var(--primary); margin-bottom: 16px; }
+p,
+ul,
+ol,
+pre { margin: 0 0 24px; }
+strong { font-weight: 700; color: inherit; }
+a { color: var(--primary); }
+li + li { margin-top: 8px; }
+
+/* Big numbered lists */
+ol { list-style: none; padding: 0; counter-reset: item; }
+ol li {
+  counter-increment: item;
+  position: relative;
+  margin: 0;
+  padding: 14px 0 14px 80px;
+  border-top: 1px solid var(--border);
+}
+ol li::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--primary);
+}
+ol li strong { margin-right: 0.4em; }
+
+/* ---------- Code ---------- */
+code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--code-bg);
+  color: var(--ink);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px 24px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+:is(h1, h2, h3) code { background: none !important; padding: 0; font-size: 1em; color: inherit !important; }
+
+/* ---------- cover ---------- */
+section.cover {
+  color: #fff;
+  justify-content: flex-end;
+  padding: 88px;
+}
+section.cover h1 { font-size: 104px; max-width: 900px; color: inherit; margin-bottom: 32px; }
+section.cover p { font-size: 26px; max-width: 640px; }
+section.cover p:last-child {
+  margin: 32px 0 0;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+}
+
+/* ---------- divider ---------- */
+section.divider {
+  color-scheme: dark;
+  background: var(--black);
+  color: #fff;
+  justify-content: center;
+}
+section.divider h2 { font-size: 80px; max-width: 960px; margin-bottom: 24px; }
+section.divider h2::before {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 6px;
+  margin-bottom: 32px;
+  background: var(--yellow);
+}
+section.divider p { color: rgba(255, 255, 255, 0.65); }
+
+/* ---------- split ---------- */
+section.split {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  grid-auto-rows: min-content;
+  align-content: center;
+  column-gap: 64px;
+}
+section.split > * { grid-column: 1; }
+section.split > :last-child {
+  grid-column: 2;
+  grid-row: 1 / span 20;
+  align-self: center;
+  margin: 0;
+}

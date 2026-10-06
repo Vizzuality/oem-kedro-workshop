@@ -223,6 +223,11 @@ Get the slides at
 
 ## The context
 
+TODO
+> we are a multidisciplinaary team ...
+> multiple projects with one or two memebers
+> Show project that used kedro: FIP, BSC...
+
 ---
 
 ## Geospatial data pipelines 
@@ -385,7 +390,7 @@ TODO
 1. **Catalog, not code** Every dataset declared once
 2. **Pure nodes** GeoDataFrame in, GeoDataFrame out
 3. **Parameters** CRS, resolution, thresholds
-4. **`kedro viz`** Show the pipeline, don't explain it
+4. **`kedro viz`**
 
 ---
 

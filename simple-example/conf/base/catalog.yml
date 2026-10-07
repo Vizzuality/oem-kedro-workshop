@@ -2,3 +2,27 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
+
+# GBIF occurrences of the Iberian lynx (Lynx pardinus) in Spain
+lynx_observations:
+  type: polars.CSVDataset
+  filepath: data/01_raw/lynx_observations.csv
+
+# Natura 2000 Habitats Directive sites in Spain (EEA)
+natura2000_sites:
+  type: geopandas.GenericDataset
+  filepath: data/01_raw/natura2000_es.gpkg
+  file_format: file
+  load_args:
+    engine: pyogrio
+
+# Observations flagged as inside / outside a protected site.
+# GeoParquet, so it can be opened in QGIS
+lynx_points_flagged:
+  type: geopandas.GenericDataset
+  filepath: data/03_primary/lynx_points_flagged.parquet
+  file_format: parquet
+
+protection_summary:
+  type: polars.CSVDataset
+  filepath: data/08_reporting/protection_summary.csv

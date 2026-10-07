@@ -1,4 +1,6 @@
-ipython>=8.10
-jupyterlab>=3.0
-notebook
+geopandas>=1.1.4
 kedro~=1.7.0
+kedro-datasets[geopandas-genericdataset,polars-csvdataset]>=9.6.0
+kedro-viz>=12.5.0
+polars>=1.30,<2
+pyarrow>=25.0.1

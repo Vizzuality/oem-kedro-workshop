@@ -12,10 +12,12 @@ dynamic = [
     "version",
 ]
 dependencies = [
-    "ipython>=8.10",
-    "jupyterlab>=3.0",
-    "notebook",
+    "geopandas>=1.1.4",
     "kedro~=1.7.0",
+    "kedro-datasets[geopandas-genericdataset,polars-csvdataset]>=9.6.0",
+    "kedro-viz>=12.5.0",
+    "polars>=1.30,<2",
+    "pyarrow>=25.0.1",
 ]
 
 [project.scripts]
@@ -79,3 +81,6 @@ select = [
 ignore = [
     "E501",
 ]
+
+[tool.kedro_telemetry]
+project_id = "56b6b31861ee4110a26e843b7190492f"

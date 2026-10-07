@@ -93,24 +93,43 @@ start with `kedro new -n example`
 
 <!-- _class: split -->
 
+## The example
+
+How protected is the Iberian lynx?
+
+What share of *Lynx pardinus* observations in Spain fall inside **Natura 2000** sites?
+
+- **GBIF** observations: CSV with lat/lon
+- **Natura 2000** Habitats Directive sites: GeoPackage
+
+```
+observations ──► to_points ──► reproject ──┐
+                                           ├──► flag_protected ──► summarise
+natura2000 ─────────────────► reproject ───┘
+```
+
+---
+
+<!-- _class: split -->
+
 ## The Data Catalog
 
 Record of all the I/O datasets.
 
 ```yaml
 # conf/base/catalog.yml
-admin_boundaries:
+lynx_observations:
+  type: polars.CSVDataset
+  filepath: data/01_raw/lynx_observations.csv
+
+natura2000_sites:
   type: geopandas.GenericDataset
-  filepath: data/01_raw/admin_boundaries.gpkg
+  filepath: data/01_raw/natura2000_es.gpkg
   file_format: file
 
-land_cover:
-  type: kedro_datasets_experimental.rioxarray.GeoTIFFDataset
-  filepath: data/01_raw/land_cover.tif
-
-zonal_stats:
+lynx_points_flagged:
   type: geopandas.GenericDataset
-  filepath: data/03_primary/zonal_stats.parquet
+  filepath: data/03_primary/lynx_points_flagged.parquet
   file_format: parquet
 ```
 
@@ -123,7 +142,7 @@ zonal_stats:
 **No I/O** inside the function, so it's easy to test with tiny sample data.
 
 ```python
-# src/example/pipelines/{pipeline}/nodes.py
+# src/simple_example/pipelines/lynx/nodes.py
 import geopandas as gpd
 
 
@@ -131,10 +150,13 @@ def reproject(gdf: gpd.GeoDataFrame, crs: str) -> gpd.GeoDataFrame:
     return gdf.to_crs(crs)
 
 
-def compute_area(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    gdf = gdf.copy()
-    gdf["area_km2"] = gdf.geometry.area / 1e6
-    return gdf
+def flag_protected(
+    points: gpd.GeoDataFrame, sites: gpd.GeoDataFrame
+) -> gpd.GeoDataFrame:
+    inside = gpd.sjoin(points, sites, predicate="within").index.unique()
+    points = points.copy()
+    points["in_protected"] = points.index.isin(inside)
+    return points
 ```
 
 ---
@@ -146,17 +168,21 @@ def compute_area(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 Nodes connect through dataset names. Kedro works out the run order.
 
 ```python
-# src/example/pipelines/{pipeline}/pipeline.py
+# src/simple_example/pipelines/lynx/pipeline.py
 from kedro.pipeline import Pipeline, node
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline([
-        node(reproject, ["admin_boundaries", "params:target_crs"],
-             "admin_projected"),
-        node(compute_area, "admin_projected", "admin_with_area"),
-        node(zonal_statistics, ["admin_with_area", "land_cover"],
-             "zonal_stats"),
+        node(to_points, "lynx_observations", "lynx_points"),
+        node(reproject, ["lynx_points", "params:target_crs"],
+             "lynx_points_projected"),
+        node(reproject, ["natura2000_sites", "params:target_crs"],
+             "natura2000_projected"),
+        node(flag_protected,
+             ["lynx_points_projected", "natura2000_projected"],
+             "lynx_points_flagged"),
+        node(summarise, "lynx_points_flagged", "protection_summary"),
     ])
 ```
 
@@ -171,7 +197,6 @@ Parameters go to the `parameters.yml` files, which is namespaced by `env` and ea
 ```yaml
 # conf/{env}/parameters.yml
 target_crs: "EPSG:3035"
-resolution_m: 100
 ```
 
 ---

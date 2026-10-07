@@ -1,0 +1,2 @@
+# ETRS89 / LAEA Europe, an equal-area projection for Europe
+target_crs: "EPSG:3035"

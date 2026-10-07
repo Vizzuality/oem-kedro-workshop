@@ -25,31 +25,39 @@ Get the slides at
 
 `https://vizzuality.github.io/oem-kedro-workshop`
 
+![w:300](assets/url-qr.svg)
 
 ---
+<!-- _footer: " * therefore the context of this workshop and why we are using kedro." -->
+## The Context at Vizzuality*
 
-## The context
 
-TODO
-> we are a multidisciplinaary team ...
-> multiple projects with one or two memebers
-> Show project that used kedro: FIP, BSC...
+1) Team of 10 scientits and data engineers.
+2) Multiple projets at time with 1~3 persons allocated.
+3) Huge diversity of projects with completely different kinds of data.
+4) From small .csv to 100 GBs of EO data.
 
 ---
 
 ## Geospatial data pipelines 
 
-- Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
-- People come from different backgrounds.
-- Teams have different levels of software engineering skills.
+1. Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
+2. People have different backgrounds.
+3. Teams have different levels of software engineering skills.
+
+![w:400](assets/too-many-nb.png)
 
 ---
 
-<!-- _class: split -->
+## Geospatial data pipelines
 
+  1. `make` this, `make` that. 
+
+---
+<!-- _class: split -->
 ## Why Kedro?
 
-Opinionated framework that streamlines and organizes projects around software engineering "best practices".
+Opinionated is framework that streamlines and organizes data pipeline projects around software engineering "best practices" and standard python project layout.
 
 1. **Data Catalog** Every dataset declared in one place
 2. **Pipelines and Nodes** Pure Python functions wired into a DAG
@@ -57,7 +65,6 @@ Opinionated framework that streamlines and organizes projects around software en
 
 ---
 <!-- _class: split divider -->
-
 ## `kedro`
 
 start with `kedro new -n example`
@@ -76,7 +83,7 @@ start with `kedro new -n example`
 │  ├── 02_intermediate
 │  └── 03_primary
 ├── src
-│  └── simple_example
+│  └── example
 │     ├── pipeline_registry.py
 │     ├── pipelines
 │     └── settings.py

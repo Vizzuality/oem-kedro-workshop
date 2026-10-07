@@ -17,6 +17,10 @@
   Usage:  <!-- _class: split -->
   Combine:  <!-- _class: split divider -->  (black two-column slide)
 
+  The cover gets a soft sonar/plotter grid over its dark side.
+  Footers are per slide (`<!-- _footer: text -->`): small, faded body text,
+  on the same line as the page number.
+
   Code highlighting comes from the default theme (GitHub palette). Dark slides
   get the GitHub dark palette through `color-scheme: dark`, same as the
   built-in `invert` class.
@@ -34,6 +38,9 @@ section {
   --muted: #6b6b6b;
   --code-bg: light-dark(#f6f8fa, #161b22);
   --border: light-dark(#e1e4e8, #30363d);
+  --grid-minor: color-mix(in srgb, var(--cyan) 5%, transparent);
+  --grid-major: color-mix(in srgb, var(--cyan) 16%, transparent);
+  --grid-tick: color-mix(in srgb, var(--cyan) 45%, transparent);
 
   font-family: Inter, sans-serif;
   font-size: 26px;
@@ -43,6 +50,9 @@ section {
   padding: 72px 88px;
 }
 section::after { font-size: 14px; color: var(--primary); right: 40px; bottom: 28px; }
+
+/* ---------- footer (per slide: <!-- _footer: text -->) ---------- */
+footer { left: 88px; bottom: 28px; font-size: 14px; color: inherit; opacity: 0.5; }
 
 /* ---------- Typography ---------- */
 h1,
@@ -64,6 +74,8 @@ ol,
 pre { margin: 0 0 24px; }
 strong { font-weight: 700; color: inherit; }
 a { color: var(--primary); }
+/* An image on its own line is centred in its column */
+p > img:only-child { display: block; max-width: 100%; margin: 0 auto; }
 li + li { margin-top: 8px; }
 
 /* Big numbered lists */
@@ -116,9 +128,6 @@ section.cover {
 /* Plotter / sonar overlay on the dark side: fine grid, major guides, edge
    rulers, a crosshair and range rings, fading out towards the photo. */
 section.cover::before {
-  --grid: rgba(4, 204, 197, 0.05);
-  --guide: rgba(4, 204, 197, 0.16);
-  --tick: rgba(4, 204, 197, 0.45);
   content: "";
   position: absolute;
   top: 0;
@@ -128,25 +137,25 @@ section.cover::before {
   pointer-events: none;
   background:
     /* crosshair */
-    linear-gradient(var(--guide), var(--guide)) 0 96px / 100% 1px no-repeat,
-    linear-gradient(var(--guide), var(--guide)) 88px 0 / 1px 100% no-repeat,
+    linear-gradient(var(--grid-major), var(--grid-major)) 0 96px / 100% 1px no-repeat,
+    linear-gradient(var(--grid-major), var(--grid-major)) 88px 0 / 1px 100% no-repeat,
     /* edge rulers */
-    linear-gradient(90deg, var(--tick) 1px, transparent 1px) 0 0 / 24px 10px repeat-x,
-    linear-gradient(var(--tick) 1px, transparent 1px) 0 0 / 10px 24px repeat-y,
+    linear-gradient(90deg, var(--grid-tick) 1px, transparent 1px) 0 0 / 24px 10px repeat-x,
+    linear-gradient(var(--grid-tick) 1px, transparent 1px) 0 0 / 10px 24px repeat-y,
     /* range rings around the crosshair */
     repeating-radial-gradient(circle at 88px 96px,
-      transparent 0 119px, var(--guide) 119px 120px),
+      transparent 0 119px, var(--grid-major) 119px 120px),
     /* major + minor grid */
-    linear-gradient(90deg, var(--guide) 1px, transparent 1px) 0 0 / 120px 120px,
-    linear-gradient(var(--guide) 1px, transparent 1px) 0 0 / 120px 120px,
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
-    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 24px 24px;
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 24px 24px;
   mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
 }
-section.cover > * { position: relative; }
+section.cover > :not(footer) { position: relative; }
 section.cover h1 { font-size: 104px; max-width: 900px; color: inherit; margin-bottom: 32px; }
 section.cover p { font-size: 26px; max-width: 640px; }
-section.cover p:last-child {
+section.cover p:last-of-type {
   margin: 32px 0 0;
   font-size: 16px;
   letter-spacing: 0.12em;
@@ -175,14 +184,16 @@ section.divider p { color: rgba(255, 255, 255, 0.65); }
 section.split {
   display: grid;
   grid-template-columns: 5fr 7fr;
-  grid-auto-rows: min-content;
-  align-content: center;
+  /* equal 1fr rows above and below the left column keep it vertically centred */
+  grid-template-rows: 1fr repeat(18, min-content) 1fr;
   column-gap: 64px;
 }
-section.split > * { grid-column: 1; }
-section.split > :last-child {
+section.split::before { content: ""; grid-column: 1; }
+section.split > :not(footer) { grid-column: 1; }
+section.split > :nth-last-child(1 of :not(footer)) {
   grid-column: 2;
-  grid-row: 1 / span 20;
+  grid-row: 1 / -1;
   align-self: center;
   margin: 0;
 }
+section.split > :nth-last-child(2 of :not(footer)) { margin-bottom: 0; }

@@ -32,7 +32,9 @@ jobs:
 
       - name: Export slides
         working-directory: slides
-        run: npx -y @marp-team/marp-cli@4.5.1 --no-stdin --theme vizzuality.css slides.md -o _site/index.html
+        run: |
+          npx -y @marp-team/marp-cli@4.5.1 --no-stdin --theme vizzuality.css slides.md -o _site/index.html
+          cp -r assets _site/
 
       - uses: actions/upload-pages-artifact@v3
         with:

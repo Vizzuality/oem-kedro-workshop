@@ -23,16 +23,6 @@ dependencies = [
 [project.scripts]
 simple-example = "simple_example.__main__:main"
 
-[project.entry-points."kedro.hooks"]
-
-[project.optional-dependencies]
-dev = [
-    "pytest-cov>=3,<7",
-    "pytest-mock>=1.7.1, <2.0",
-    "pytest~=7.2",
-    "ruff~=0.12.0",
-]
-
 [tool.setuptools.dynamic.version]
 attr = "simple_example.__version__"
 
@@ -84,3 +74,11 @@ ignore = [
 
 [tool.kedro_telemetry]
 project_id = "56b6b31861ee4110a26e843b7190492f"
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=3,<7",
+    "pytest-mock>=1.7.1, <2.0",
+    "pytest~=7.2",
+    "ruff~=0.12.0",
+]

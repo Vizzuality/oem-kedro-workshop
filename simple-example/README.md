@@ -34,11 +34,3 @@ uv run kedro run
 uv run kedro viz                          # explore the DAG
 uv run pytest
 ```
-
-## Exercises
-
-- Change `target_crs` in `conf/base/parameters.yml`. Does the result change? Why (not)?
-- Many observations come from iNaturalist with coordinates obscured by ~28 km to protect the species
-  (see `coordinateUncertaintyInMeters`). Add a node that drops imprecise observations, with the
-  threshold as a parameter, and see how the percentage changes.
-- Switch to another species by changing `LYNX_TAXON_KEY` in the download script.

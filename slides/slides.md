@@ -32,42 +32,50 @@ Get the slides at
 ## The Context at Vizzuality*
 
 
-1) Team of 10 scientits and data engineers.
-2) Multiple projets at time with 1~3 persons allocated.
-3) Huge diversity of projects with completely different kinds of data.
-4) From small .csv to 100 GBs of EO data.
+1) Team of 10 scientist and data engineers
+2) Multiple projets at time with 1~3 persons allocated each
+3) Huge diversity of projects with completely different kinds of data
+4) From small .csv to 100 GBs of EO data
 
 ---
 
 ## Geospatial data pipelines 
 
-1. Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
-2. People have different backgrounds.
-3. Teams have different levels of software engineering skills.
+- Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
+- People have different backgrounds.
+- Teams have different levels of software engineering skills.
 
 ![w:400](assets/too-many-nb.png)
 
 ---
 
-## Geospatial data pipelines
+<style scoped>
+p {text-align: center;}
+</style>
 
-  1. `make` this, `make` that. 
+`make` this
+`make` that
+`make` it messy
+`make` it bad
 
 ---
-<!-- _class: split -->
+
 ## Why Kedro?
 
-Opinionated is framework that streamlines and organizes data pipeline projects around software engineering "best practices" and standard python project layout.
+`kedro` is an **opinionated** framework that streamlines and organizes data pipeline projects around software engineering "best practices" and standard python project layouts.
 
+---
+
+1. **Project structure** The project template provided is standard python package
 1. **Data Catalog** Every dataset declared in one place
 2. **Pipelines and Nodes** Pure Python functions wired into a DAG
-3. **Reproducibility** Same inputs give the same outputs
+3. **Reproducibility and testability** Structure allows repetition and eases tests
 
 ---
 <!-- _class: split divider -->
 ## `kedro`
 
-start with `kedro new -n example`
+start a templated project with `kedro new -n example`
 
 ```
 .
@@ -99,8 +107,8 @@ start with `kedro new -n example`
 ---
 
 <!-- _class: split -->
-
-## The example
+<!-- _footer: Code can be found [here](https://github.com/Vizzuality/oem-kedro-workshop/tree/main/simple-example)-->
+## Example project
 
 How protected is the Iberian lynx?
 
@@ -122,6 +130,8 @@ natura2000 ─────────────────► reproject ─�
 ## The Data Catalog
 
 Record of all the I/O datasets.
+
+Check the available <a href='https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-9.6.0/' target='_blank'>kedro datasets</a>
 
 ```yaml
 # conf/base/catalog.yml
@@ -157,13 +167,13 @@ def reproject(gdf: gpd.GeoDataFrame, crs: str) -> gpd.GeoDataFrame:
     return gdf.to_crs(crs)
 
 
-def flag_protected(
-    points: gpd.GeoDataFrame, sites: gpd.GeoDataFrame
-) -> gpd.GeoDataFrame:
-    inside = gpd.sjoin(points, sites, predicate="within").index.unique()
-    points = points.copy()
-    points["in_protected"] = points.index.isin(inside)
-    return points
+def to_points(observations: pl.DataFrame) -> gpd.GeoDataFrame:
+    geometry = gpd.points_from_xy(
+        observations["decimalLongitude"], observations["decimalLatitude"]
+    )
+    return gpd.GeoDataFrame(
+        observations.to_pandas(), geometry=geometry, crs="EPSG:4326"
+    )
 ```
 
 ---
@@ -176,21 +186,22 @@ Nodes connect through dataset names. Kedro works out the run order.
 
 ```python
 # src/simple_example/pipelines/lynx/pipeline.py
-from kedro.pipeline import Pipeline, node
-
+from kedro.pipeline import Node, Pipeline
+from .nodes import reproject, to_points
 
 def create_pipeline(**kwargs) -> Pipeline:
-    return Pipeline([
-        node(to_points, "lynx_observations", "lynx_points"),
-        node(reproject, ["lynx_points", "params:target_crs"],
-             "lynx_points_projected"),
-        node(reproject, ["natura2000_sites", "params:target_crs"],
-             "natura2000_projected"),
-        node(flag_protected,
-             ["lynx_points_projected", "natura2000_projected"],
-             "lynx_points_flagged"),
-        node(summarise, "lynx_points_flagged", "protection_summary"),
-    ])
+    return Pipeline(
+        [
+            Node(to_points, "lynx_observations", "lynx_points", name="to_points"),
+            Node(
+                reproject,
+                ["lynx_points", "params:target_crs"],
+                "lynx_points_projected",
+                name="reproject_points",
+            ),
+            ...
+        ]
+    )
 ```
 
 ---
@@ -207,13 +218,18 @@ target_crs: "EPSG:3035"
 ```
 
 ---
-
 <!-- _class: divider -->
-<!-- _paginate: false -->
 
-## Demo: the resulting DAG
+## Explore the resulting DAG
 
 `kedro viz`
+
+---
+
+## Hands-on exercise
+
+- Add a node to the pipeline that filters the observations by one year
+- Change the output to be vector file of N2K polygons annotated with lynx observations
 
 ---
 
@@ -224,12 +240,6 @@ TODO
 
 ---
 
-## Takeaways
-
-1. **Catalog, not code** Every dataset declared once
-2. **Pure nodes** GeoDataFrame in, GeoDataFrame out
-3. **Parameters** CRS, resolution, thresholds
-4. **`kedro viz`**
 
 ---
 

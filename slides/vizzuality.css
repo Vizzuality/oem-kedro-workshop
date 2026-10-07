@@ -113,6 +113,37 @@ section.cover {
   justify-content: flex-end;
   padding: 88px;
 }
+/* Plotter / sonar overlay on the dark side: fine grid, major guides, edge
+   rulers, a crosshair and range rings, fading out towards the photo. */
+section.cover::before {
+  --grid: rgba(4, 204, 197, 0.05);
+  --guide: rgba(4, 204, 197, 0.16);
+  --tick: rgba(4, 204, 197, 0.45);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background:
+    /* crosshair */
+    linear-gradient(var(--guide), var(--guide)) 0 96px / 100% 1px no-repeat,
+    linear-gradient(var(--guide), var(--guide)) 88px 0 / 1px 100% no-repeat,
+    /* edge rulers */
+    linear-gradient(90deg, var(--tick) 1px, transparent 1px) 0 0 / 24px 10px repeat-x,
+    linear-gradient(var(--tick) 1px, transparent 1px) 0 0 / 10px 24px repeat-y,
+    /* range rings around the crosshair */
+    repeating-radial-gradient(circle at 88px 96px,
+      transparent 0 119px, var(--guide) 119px 120px),
+    /* major + minor grid */
+    linear-gradient(90deg, var(--guide) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(var(--guide) 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 24px 24px;
+  mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
+}
+section.cover > * { position: relative; }
 section.cover h1 { font-size: 104px; max-width: 900px; color: inherit; margin-bottom: 32px; }
 section.cover p { font-size: 26px; max-width: 640px; }
 section.cover p:last-child {

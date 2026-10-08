@@ -12,7 +12,6 @@ lynx_observations:
 natura2000_sites:
   type: geopandas.GenericDataset
   filepath: data/01_raw/natura2000_es.gpkg
-  file_format: file
   load_args:
     engine: pyogrio
 

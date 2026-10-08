@@ -1,0 +1,5 @@
+# Classify the whole island: kedro run --pipeline inference --env mallorca
+# Top-level keys replace the ones in base, so the whole `inference` block is repeated.
+inference:
+  bbox: [444000, 4350000, 539000, 4420000]
+  tile_size: 512

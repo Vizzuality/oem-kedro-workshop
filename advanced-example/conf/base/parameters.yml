@@ -1,0 +1,26 @@
+# WGS 84 / UTM zone 31N
+crs: "EPSG:32631"
+
+sampling:
+  n_polygons: 5000         # how many polygons to sample, keeps the download small
+  min_area_m2: 200     # smaller polygons hold too few 10 m pixels
+  inscribed_proportion: 0.9
+  background_gap: 300      # metres between the polygon edge and the background circle
+  background_radius: 50   # metres
+  seed: 42
+
+# The model learns from the change in the embedding between these two years
+years:
+  before: 2017
+  after: 2024
+
+model:
+  test_size: 0.3
+  n_estimators: 100
+  seed: 42
+
+# Area to classify, [minx, miny, maxx, maxy] in the CRS of the TESSERA group (EPSG:32631)
+inference:
+  bbox: [465000, 4378000, 475000, 4386000]  # Palma, 10 x 8 km
+  # all of Mallorca: --env mallorca (conf/mallorca/parameters.yml), ~1 hour
+  tile_size: 512  # pixels per side, one tile of embeddings in memory at a time

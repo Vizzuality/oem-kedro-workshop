@@ -1,0 +1,42 @@
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
+
+construction_polygons:
+  type: geopandas.GenericDataset
+  filepath: data/01_raw/construction_polygons.geojson
+  file_format: file
+  load_args:
+    engine: pyogrio
+
+
+sampling_sites:
+  type: geopandas.GenericDataset
+  filepath: data/02_intermediate/sampling_sites.parquet
+  file_format: parquet
+
+# TESSERA embeddings on Source Cooperative. Zarr v3, one group per UTM zone.
+# Our own dataset type, see src/advanced_example/datasets.py
+tessera:
+  type: advanced_example.datasets.TesseraDataset
+  url: https://data.source.coop/tessera/tessera/zarr/v1
+  group: utm31  # Mallorca
+
+# One row per pixel: site, label and the 128 embedding differences
+training_pixels:
+  type: pandas.ParquetDataset
+  filepath: data/05_model_input/training_pixels.parquet
+
+construction_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/construction_model.pkl
+
+# P(construction) for every pixel of the inference area. Opens in QGIS
+construction_probability:
+  type: advanced_example.datasets.COGDataset
+  filepath: data/07_model_output/construction_probability.tif
+
+model_metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/model_metrics.json
+  save_args:
+    indent: 2

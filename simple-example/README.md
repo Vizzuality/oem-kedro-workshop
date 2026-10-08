@@ -28,9 +28,8 @@ Outputs:
 ## Run it
 
 ```bash
-uv sync --extra dev
+uv sync
 uv run python scripts/download_data.py   # once, fills data/01_raw
 uv run kedro run
 uv run kedro viz                          # explore the DAG
-uv run pytest
 ```

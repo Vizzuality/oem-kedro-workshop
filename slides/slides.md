@@ -28,18 +28,19 @@ Get the slides at
 ![w:300](assets/url-qr.svg)
 
 ---
+
 <!-- _footer: " * hence the context of this workshop and why we use Kedro." -->
+
 ## The context at Vizzuality*
 
-
-1) Team of 10 scientists and data engineers
-2) Multiple projects at a time, with 1–3 people on each
-3) Huge diversity of projects with completely different kinds of data
-4) From small CSV files to hundreds of GB of EO data
+1. Team of 10 scientists and data engineers
+2. Multiple projects at a time, with 1–3 people on each
+3. Huge diversity of projects with completely different kinds of data
+4. From small CSV files to hundreds of GB of EO data
 
 ---
 
-## Geospatial data pipelines 
+## Geospatial data pipelines
 
 - Geospatial projects tend to turn into a pile of notebooks, scripts and shell commands.
 - People have different backgrounds.
@@ -72,7 +73,9 @@ p {text-align: center;}
 4. **Reproducibility and testability** The structure makes runs repeatable and testing easier
 
 ---
+
 <!-- _class: split divider -->
+
 ## `kedro`
 
 Start a templated project with `kedro new -n example`
@@ -108,11 +111,12 @@ Start a templated project with `kedro new -n example`
 
 <!-- _class: split -->
 <!-- _footer: Code can be found [here](https://github.com/Vizzuality/oem-kedro-workshop/tree/main/simple-example)-->
+
 ## Example project
 
 How protected is the Iberian lynx?
 
-What share of *Lynx pardinus* observations in Spain fall inside **Natura 2000** sites?
+What share of _Lynx pardinus_ observations in Spain fall inside **Natura 2000** sites?
 
 - **GBIF** observations: CSV with lat/lon
 - **Natura 2000** Habitats Directive sites: GeoPackage
@@ -213,6 +217,7 @@ target_crs: "EPSG:3035"
 ```
 
 ---
+
 <!-- _class: divider -->
 
 ## Explore the resulting DAG
@@ -220,7 +225,9 @@ target_crs: "EPSG:3035"
 `kedro viz`
 
 ---
+
 <!--header: Hands-on exercise-->
+
 ## Hands-on exercise
 
 - Add a node to the pipeline that filters the observations by one year
@@ -229,14 +236,18 @@ target_crs: "EPSG:3035"
 ---
 
 ## Setup
+
 - `uv sync` in simple-example/
 - `uv run pytest` as a first sanity check
 - Download the data with `uv run scripts/download_data.py`
-- `uv run kedro run` to run the pipeline 
+- `uv run kedro run` to run the pipeline
 
 ---
-<!--header: ""-->
-<!-- _class: divider -->
+
+<!--
+header: ""
+_class: divider
+-->
 
 ## Friction points in geospatial workloads
 
@@ -244,17 +255,20 @@ target_crs: "EPSG:3035"
 
 ## ⚖️🗡️
 
-1) No native raster support
-2) Cost of adapting to a stiff API
-3) Misuse is worse than no use
-4) Scalability is as good as the dataset implementation
-5) LLMs used to be bad at respecting the _kedro way_
+1. No native raster support
+2. Cost of adapting to a stiff API
+3. Misuse is worse than no use
+4. Scalability is as good as the dataset implementation
+5. LLMs used to be bad at following the _kedro way_
 
 ---
 
-<!-- _class: divider -->
-<!-- _paginate: false -->
+<!--
+_class: cover
+backgroundColor: #000000
+paginate: false
+-->
 
-## Thank you
+# Thank you
 
-biel.stela@vizzuality.com
+#### biel.stela@vizzuality.com
